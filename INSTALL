@@ -1,0 +1,149 @@
+# Installation Instructions
+
+*************************
+## _Original Game Data Files_
+  Due to licence restrictions, we don't distribute the original game data files. You should have a copy of Syndicate or buy it.
+
+  In order to run FreeSynd, either copy all files from the original Syndicate "DATA" directory into the directory where Freesynd stores its own data, or edit the FreeSynd configuration to indicate where the original game's "DATA" directory is (see "Configuring FreeSynd" below). 
+
+  At first run Freesynd will test files located in your Syndicate "DATA" directory to verify that required files are present and are correct.
+
+> **Attention** : Please, be sure to have files from the first version of Syndicate as FreeSynd does not support files from Syndicate Plus or Syndicate Wars.
+
+*************************
+
+## Installation
+
+### From binary distribution file
+
+#### Windows
+    1/ Download and unzip the file in any directory you want.
+           This directory will be called FS_ROOT in the following text.
+	2/ Configure Freesynd with the original game data files (see chapter "Configuring FreeSynd").
+	3/ Run FS_ROOT/freesynd.exe.
+
+#### Mac
+    1/ Download the dmg file and double click to install
+    2/ Configure Freesynd with the original game data files (see chapter "Configuring FreeSynd").
+    3/ Run the application
+		
+#### Linux
+    1/ Install the freesynd_X.X_amd64.deb
+    2/ Configure Freesynd with the original game data files (see chapter "Configuring FreeSynd").
+    3/ Type `freesynd` to run the game
+    
+
+### From building from source (packaged file or Git)
+Download and unzip file containing source code in any directory you want or git clone the repository.
+The root directory containing the source code will be called *FS_ROOT* in the following text.
+
+> **Attention** : This file only describes the installation from the CLI for a quick setup. If you want to configure a full Development Environment, please consult this [WikiPage](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/).
+
+#### Prerequisites
+**Note**: For more information on how to setup those prerequisites for your plateform, please consult this [Wiki Page](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/#requirements).
+
+To build Freesynd, you will need to install :
+    1/ [Cmake 3.22](https://cmake.org/) with preferrably Ninja build
+    2/ A C++ compiler
+	3/ The following required Libraries (for build and run) :
+    - SDL-1.2
+    - SDL_mixer
+    - SDL_image
+    - Png
+
+**Note** : On Windows, required librairies (for development and run) are available with the source code (in the /extern/ directory)
+
+#### Build the source
+On any platform, from the command line :
+
+	$ cd FS_ROOT
+	$ cmake -S . -B <build_dir> [-G"<generator>"]
+	$ cmake --build <build_dir>
+
+Or you can use an existing CMake preset :
+    $ cd FS_ROOT
+    $ cmake -S . --list-presets  # To list available presets
+    $ cmake -S . --preset <preset> # To configure using a given preset
+    $ cmake --build --preset <preset> # To build using a given preset
+
+- Use optionally `-G"<generator>"` to specify a particular build system. See CMake documentation for a list of options.
+- It is a best practice to specify a build directory inside the source code directory. Put your build directory below the "build" directory so that Git ignores it automatically.
+- You can set options when running CMake to configure the build. 
+    - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -LH` to list available options
+    - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -D<OPTION>=ON|OFF` to set the value of an option
+    - Available options :
+        - `CMAKE_INSTALL_PREFIX`: You can change this standard CMAKE variable to specify the location of installation for all files
+        - `BIN_DIR` : Set this variable to a directory specifically for the binary files
+        - `DATA_DIR` : Set this variable to a directory specifically for the data files
+        - `USE_ASSASSINATE_OGG`: Use Ogg file for assassinate music instead of midi file
+        - `USE_INTRO_OGG`: Use Ogg file for intro music instead of midi file
+        - `USE_SDL_MIXER`: Use SDL Mixer library
+        - `USE_SYSTEM_SDL`: Use SDL library
+
+**Windows**
+Then you need to copy all dll files that are in FS_ROOT/extern/ to the directory where the freesynd.exe file has been installed
+
+**Linux**
+Install the application :
+
+    $ sudo cmake --install <build_dir>
+
+**Mac**
+TBC
+
+## Configuring FreeSynd
+
+FreeSynd comes with 2 differents configuration files :
+- `freesynd.ini` this file lists common parameters for all users (except on MacOS)
+- `user.conf` this file is per user.
+You can edit the files with any text editor to customize your installation.
+
+### freesynd.ini
+When you run FreeSynd, the application expects to find `freesynd.ini`, either in a default
+location or by specifying the location of the folder at runtime.
+Run freesynd --help to see usage information.
+
+The default location of `freesynd.ini` is different on each platform.
+ - Windows: the folder containing freesynd.exe
+ - Linux: /usr/local/etc/freesynd/
+ - Mac: This file does not exist on Mac. Parameters are stored in the user default system.
+  To configure those parameters on Mac, type the following command :
+  `defaults write com.freesynd.FreeSynd <param> <value`
+
+Here is a description of the parameters contained in this file:
+ - `freesynd_data_dir` : Path to the FreeSynd "data" directory.
+ If this parameter is empty, the application will search for default directory. Only set this if you really need to.
+ - `data_dir`: Path to the original Syndicate "DATA" directory.
+ By default, this will be the same as `freesynd_data_dir`.
+
+### user.conf
+At startup, Freesynd will look for a `user.conf` file and will creat for you if it does not already exist.
+The location of `user.conf` is different on each platform.
+  * Windows: the folder containing freesynd.exe
+  * Linux: $HOME/.freesynd/
+  * Mac: $HOME/.freesynd/
+
+  The default location of this file can be overridden on the command line.
+Run freesynd --help to see usage information.
+
+
+Here is a description of the parameters contained in this file:
+ - `test_data`: (true/false) If true, the game will look for Original Syndicate Data and test it
+ - `fullscreen`: (true/false) If true, the game will run in fullscreen mode.
+ - `play_intro`: (true/false) If true, the introduction will be played.
+ - `language`: 0:english, 1:français, 2:italiano, 3:deutsch 
+ - `save_data_dir`: Directory to save file. By default, it is a save directory near the user.conf file.
+
+After launch, `play_intro` and `test_data` will be turned off automatically.
+
+
+## Saved Games
+Saved games are located in a different place on each platform.
+
+- Windows: a "save" folder inside the folder containing freesynd.exe
+- Linux: $HOME/.freesynd/save/
+- Mac: $HOME/.freesynd/save/
+
+You may note that this location is based on the user.conf file location.
+The saved games location can be changed using the `save_data_dir` parameter in the user.conf file.
+
