@@ -52,7 +52,7 @@ set(SOURCE_LIST
     )
 
 
-find_package (PNG REQUIRED)
+find_package (PNG)
 
 # This is the main library for this directory
 add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
@@ -61,7 +61,7 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include "${Freesynd_SOURCE_DIR}/extern/utfcpp")
 
-target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG )
+#target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG )
 
 # The USE_SYSTEM_SDL option enables the creation of the fs_engine_sdl
 # library. If not on, there will be an error as there is not other implementation
@@ -71,15 +71,15 @@ if (USE_SYSTEM_SDL)
     target_compile_definitions(fs_engine PRIVATE "SYSTEM_SDL")
 
     # Find the SDL2 library
-    find_package (SDL2 REQUIRED)
-    if (NOT SDL2_FOUND)
-        message (FATAL_ERROR "Unable to locate SDL2 Library")
-    endif ()
+    find_package (SDL2)
+    #if (NOT SDL2_FOUND)
+    #    message (FATAL_ERROR "Unable to locate SDL2 Library")
+    #endif ()
 
     find_package (SDL2_image)
-    if (NOT SDL2_IMAGE_FOUND)
-        message (FATAL_ERROR "Unable to locate SDL2_image")
-    endif ()
+    #if (NOT SDL2_IMAGE_FOUND)
+    #    message (FATAL_ERROR "Unable to locate SDL2_image")
+    #endif ()
 
     add_library(fs_engine_sdl STATIC
                   "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.cpp"
@@ -91,7 +91,7 @@ if (USE_SYSTEM_SDL)
     target_include_directories(fs_engine_sdl PUBLIC src/system "${Freesynd_SOURCE_DIR}/extern/utfcpp")
     target_include_directories(fs_engine_sdl PRIVATE include)
 
-    target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
+    #target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
     target_link_libraries(fs_engine_sdl PRIVATE freesynd_warnings )
 
     target_link_libraries(fs_engine PRIVATE Freesynd::Engine::Sdl)
@@ -103,7 +103,7 @@ option(USE_SDL_MIXER "Use SDL Mixer library" ON)
 
 if (USE_SDL_MIXER)
 
-    find_package (SDL2_mixer REQUIRED)
+    find_package (SDL2_mixer)
 
     add_library(fs_engine_sdlmixer STATIC
                   "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp"
@@ -117,8 +117,10 @@ if (USE_SDL_MIXER)
     add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
 
     target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
+    target_include_directories(fs_engine_sdlmixer PUBLIC ../utils/include)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -sUSE_SDL=2 -sUSE_SDL_MIXER=2 -sUSE_SDL_IMAGE=2 -sUSE_LIBPNG" )
     target_include_directories(fs_engine_sdlmixer PRIVATE include)
-    target_link_libraries(fs_engine_sdlmixer PRIVATE freesynd_warnings Freesynd::Utils SDL2::Main SDL2::Mixer)
+    #target_link_libraries(fs_engine_sdlmixer PRIVATE freesynd_warnings Freesynd::Utils SDL2::Main SDL2::Mixer)
 
     target_compile_definitions(fs_engine_sdl PRIVATE "HAVE_SDL_MIXER")
 
@@ -131,12 +133,12 @@ source_group(
   TREE "${PROJECT_SOURCE_DIR}/engine/include"
   FILES ${HEADER_LIST})
 
-option(USE_INTRO_OGG "Use Ogg file for intro music instead of midi file" ON)
+option(USE_INTRO_OGG "Use Ogg file for intro music instead of midi file" OFF)
 if (USE_INTRO_OGG)
     target_compile_definitions(fs_engine PRIVATE "USE_INTRO_OGG")
 endif()
 
-option(USE_ASSASSINATE_OGG "Use Ogg file for assassinate music instead of midi file" ON)
+option(USE_ASSASSINATE_OGG "Use Ogg file for assassinate music instead of midi file" OFF)
 if (USE_ASSASSINATE_OGG)
     target_compile_definitions(fs_engine PRIVATE "USE_ASSASSINATE_OGG")
 endif()

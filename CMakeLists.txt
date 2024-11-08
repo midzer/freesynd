@@ -112,7 +112,7 @@ endif()
 # For all packaging instructions
 # Only in Release mode
 #################################
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    include(Packing)
-endif()
+#if(CMAKE_BUILD_TYPE STREQUAL "Release")
+#    include(Packing)
+#endif()
 

@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -195,7 +196,7 @@ void File::getIniFullPath(const std::string& iniFolder, fs::path& iniFullPath) {
     // Since we're defaulting to the exe's folder, no need to try to create a directory.
 #else
     // should only be on Linux
-    iniFullPath.assign(FS_ETC_DIR);
+    iniFullPath.assign(File::savePath_);
 #endif
 
     } else {
@@ -229,13 +230,13 @@ bool File::getOrCreateUserConfFolder(const std::string& userConfFolder) {
 
     userConfFolderPath_ /= ".freesynd";
 
-    if (!fs::exists(userConfFolderPath_)) {
+    /*if (!fs::exists(userConfFolderPath_)) {
         LOG(Log::k_FLG_IO, "File", "getOrCreateUserConfFolder", ("Creating user config folder %s", userConfFolderPath_.string().c_str()));
         if (!fs::create_directories(userConfFolderPath_)) {
             FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Could not create user conf folder.\n"));
             return false;
         }
-    }
+    }*/
 
     return true;
 }
